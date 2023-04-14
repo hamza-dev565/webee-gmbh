@@ -1,4 +1,7 @@
+import { startOfToday } from 'date-fns';
+import { Op } from 'sequelize';
 import Event from './entities/event.entity';
+import Workshop from './entities/workshop.entity';
 
 
 export class EventsService {
@@ -85,7 +88,12 @@ export class EventsService {
      */
 
   async getEventsWithWorkshops() {
-    throw new Error('TODO task 1');
+    const eventsWithWorkshops = await Event.findAll({
+      include: [{model: Workshop, order: [['id', 'DESC']]}],
+    });
+
+
+    return eventsWithWorkshops;
   }
 
   /* TODO: complete getFutureEventWithWorkshops so that it returns events with workshops, that have not yet started
@@ -155,6 +163,15 @@ export class EventsService {
     ```
      */
   async getFutureEventWithWorkshops() {
-    throw new Error('TODO task 2');
+    const eventsWithWorkshops = await Event.findAll({
+      where: {
+        '$Workshops.start$': {
+          [Op.gte]: startOfToday(), // filter for workshops that start today or later
+        },
+      },
+      include: [{ model: Workshop }],
+    });
+
+    return eventsWithWorkshops;
   }
 }

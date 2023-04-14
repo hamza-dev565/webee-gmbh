@@ -1,4 +1,4 @@
-import { QueryInterface } from 'sequelize';
+import { QueryInterface, DataTypes } from 'sequelize';
 
 export default {
   /**
@@ -31,12 +31,184 @@ export default {
    * As a cinema owner I don't want to configure the seating for every show
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  up: (queryInterface: QueryInterface): Promise<void> => {
-    throw new Error('TODO: implement migration in task 4');
+  up: async (queryInterface: QueryInterface) => {
+    // throw new Error('TODO: implement migration in task 4');
+    'use strict';
+
+    await queryInterface.createTable('cinemas', {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      location: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+      }
+    });
+
+    // Create movie table
+    await queryInterface.createTable('movies', {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      description: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      duration: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+      }
+    });
+
+    // Create show table
+    await queryInterface.createTable('shows', {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false
+      },
+      cinemaId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: 'cinemas',
+          key: 'id'
+        },
+        allowNull: false
+      },
+      movieId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: 'movies',
+          key: 'id'
+        },
+        allowNull: false
+      },
+      showTime: {
+        type: DataTypes.DATE,
+        allowNull: false
+      },
+      maxSeats: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+      }
+    });
+
+    // Create pricing table
+    await queryInterface.createTable('pricings', {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false
+      },
+      showId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: 'shows',
+          key: 'id'
+        },
+        allowNull: false
+      },
+      type: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+      }
+    });
+
+    // Create seat table
+    await queryInterface.createTable('seats', {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false
+      },
+      showId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: 'shows',
+          key: 'id'
+        },
+        allowNull: false
+      },
+      type: {
+        type: DataTypes.ENUM,
+        values: ['singleSeat', 'Coupleseat', 'VIP'],
+        allowNull: false
+      },
+      isAvailable: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
+      },
+      createdAt: {
+        type: DataTypes.DATE
+      }
+    });
+
   },
 
+
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  down: (queryInterface: QueryInterface) => {
+  down: async (queryInterface: QueryInterface) => {
     // do nothing
+    await queryInterface.dropTable('cinemas');
+    await queryInterface.dropTable('movies');
+    await queryInterface.dropTable('shows');
+    await queryInterface.dropTable('pricings');
+    await queryInterface.dropTable('seats');
   },
+
 };

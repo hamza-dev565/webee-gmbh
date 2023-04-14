@@ -1,4 +1,4 @@
-import { literal, QueryInterface } from 'sequelize';
+import { literal, QueryInterface, DataTypes } from 'sequelize';
 import {
   addYears,
   format,
@@ -10,7 +10,7 @@ import {
 import { ModelAttributes } from 'sequelize/types/model';
 
 export default {
-  up: async (queryInterface: QueryInterface) => {
+  up: async (queryInterface: QueryInterface, ) => {
     await queryInterface.createTable('menu_item', {
       id: {
         type: 'integer',
