@@ -32,6 +32,7 @@ describe('events', () => {
       .expect(200);
 
     const result = response.body;
+    console.log(result);
 
     expect(result.length).toBe(3);
     expect(result[0].name).toBe('Laravel convention ' + date1);

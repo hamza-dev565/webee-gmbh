@@ -1,3 +1,5 @@
+import MenuItem from "./entities/menu-item.entity";
+
 export class MenuItemsService {
 
   /* TODO: complete getMenuItems so that it returns a nested menu structure
@@ -76,6 +78,30 @@ export class MenuItemsService {
   */
 
   async getMenuItems() {
-    throw new Error('TODO in task 3');
+    const menuItems = await MenuItem.findAll({ raw: true });
+
+    // Build the nested object recursively
+    const buildTree :any= (items: MenuItem[], parentId = null) => {
+      const result = [];
+
+      // Loop through each item
+      for (const item of items) {
+        // If the item has a parent ID that matches the current parent ID, add it to the result
+        if (item.parentId === parentId) {
+          // Recursively build the children of the current item
+          const children = buildTree(items, item.id);
+
+          // Add the item and its children to the result
+          result.push({ ...item, children });
+        }
+      }
+
+      return result;
+    };
+
+    // Build the nested object starting from the root menu items
+    const tree = buildTree(menuItems, null);
+
+    return tree;
   }
 }
